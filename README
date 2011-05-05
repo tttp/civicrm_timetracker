@@ -1,0 +1,27 @@
+Tracking "agile" projects can be split into two parts
+1) discussing features, commenting, reporting bugs. This is the communication part, and we use drupal and the wonderful og_mailinglist for that. It might be interresting to use open attrium as well (and patch welcome...).
+
+2) tracking time spent on issues and "high level" reporting. 
+We have selected civicrm as this is mostly about contacts and activities.
+The only "trick" is that we are using a field in civicrm_activity that isn't exposed currently in the current civicrm standard interface (as of 4.0): id_parent, so we can have a relationship between the time log and their parent activity.
+
+
+So on the drupal front Project (or sub project) have a cck "civicrm_case" (int)
+Issues have a cck "civicrm_activity" (int)
+
+
+On the civicrm side of things
+
+Each activity has a type, we create two
+
+- "task", where the duration is the expected duration
+- "timelog" with id_parent set to task where the duration is the time spend by the task batch.
+
+So if "home page layout" is the task you'll have subtasks time log "did the css sprite" with duration 2 hours on monday morning, "modified header" with duration 1 hour tue at 2pm...
+
+TODO:
+adding a hook so when you create a node project or activity, it creates a case/activity
+adding a (jqgrid based ?) interface to easily log the time spent
+develop that feature on miss moneypenny
+
+
