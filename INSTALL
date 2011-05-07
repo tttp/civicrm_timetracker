@@ -4,4 +4,8 @@ You need to create on the drupal side
 
 and on civicrm, two types of activity types: task (for the issues) and timelog (err. for the timelog more on that later)
 
+and a case type project
+
+if you want to change the names, copy this file in your sites/settings.php and modify accordingly
+civicrm_timetracker.default.settings.php
 
