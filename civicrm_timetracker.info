@@ -1,0 +1,7 @@
+name = civicrm_timetracker
+description = Track time spent on activities. Synchronise nodes and cases/activities
+dependencies[] = civicrm
+dependencies[] = content
+package = CiviCRM
+core = 6.x
+version = 1.0

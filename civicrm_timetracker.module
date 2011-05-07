@@ -1,0 +1,55 @@
+<?php 
+
+/**
+ * Implementation of hook_nodeapi().
+ * Change output for issues & project nodes
+ * 
+ * @param $node
+ *   the node object
+ * @param $op
+ *   can be 'view', 'presave', etc.
+ * @param $is_teaser
+ *   actually this only has this meaning for 'view'.
+ */
+function civicrm_timetracker_nodeapi(&$node, $op, $is_teaser = NULL, $is_page = NULL) {
+  global $civicrm_timetracker;
+  if (!is_array ($civicrm_timetracker)) {
+    require_once ('civicrm_timetracker.default.settings.php');
+  }
+  // Prevent against invalid 'nodes' built by broken 3rd party code.
+  if (!isset($node->type) || $node->type !== $civicrm_timetracker['node_type_issue']) {
+    return;
+  }
+  
+  switch ($op) {
+    case 'view':
+      if ($is_page) {
+      }
+      break;
+    case 'prepare':
+    case 'validate':
+      break;
+    case 'presave':
+      civicrm_initialize();
+      require_once ('api/api.php');
+      // TODO need to fetch the project to set the case id
+      $params = array ('version' => 3, 'activity_name' => $civicrm_timetracker['activity_type_issue'], 'subject' => $node->title,'status_id' => 1);
+      
+      if (! empty ($node->{$civicrm_timetracker['field_activity']}[0]['value'] ) )
+        $params ['id'] = $node->{$civicrm_timetracker['field_activity']}[0]['value'];
+//echo "<pre>";print_r($params);
+//  die ($op);
+      $activity = civicrm_api ('Activity','Create',$params);
+      if (!empty($activity['id'])) {
+        $node->{$civicrm_timetracker['field_activity']}[0]['value'] = $activity['id'];
+      }
+//  print_r($activity);
+//  print_r($node);
+//  die ($op);
+      break;
+    default :
+  }
+}
+
+
+?>

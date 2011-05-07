@@ -1,0 +1,7 @@
+You need to create on the drupal side
+1) a project node type (that is an OG group) and that contains a cck field integer "case" (used to store the case's id in civicrm)
+2) an issue node type (that can be published in the OG group and that contains a cck field integer "activity" (used to store the activity id)
+
+and on civicrm, two types of activity types: task (for the issues) and timelog (err. for the timelog more on that later)
+
+

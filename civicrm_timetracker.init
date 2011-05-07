@@ -1,0 +1,16 @@
+<?php
+  civicrm_initialize();
+  $results=civicrm_api("OptionValue","get", array ('version' =>'3', 'option_group_id' =>'2', 'name' =>'Issue'));
+  if ($results["count"] == 0) {
+     $results=civicrm_api("OptionValue","create", array ('version' =>'3', 'option_group_id' =>'2', 'name' =>'Issue'));
+  }
+
+  $results=civicrm_api("OptionValue","get", array ('version' =>'3', 'option_group_id' =>'2', 'name' =>'TimeLog'));
+  if ($results["count"] == 0) {
+     $results=civicrm_api("OptionValue","create", array ('version' =>'3', 'option_group_id' =>'2', 'name' =>'TimeLog'));
+  }
+
+  $results=civicrm_api("OptionValue","get", array ('version' =>'3', 'option_group_id' =>'2', 'name' =>'TimeLog'));
+  if ($results["count"] == 0) {
+$results=civicrm_api("OptionValue","create", array ('version' =>'3', 'option_group_id' =>'26', 'label' =>'project')); 
+  }
