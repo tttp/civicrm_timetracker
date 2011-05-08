@@ -97,4 +97,15 @@ function _create_issue ($node) {
   }
 }
 
+
+
+
+
+function civicrm_timetracker_views_api() {
+  return array(
+    'api' => 2,
+    'path' => drupal_get_path('module', 'civicrm_timetracker'),
+  );
+}
+
 ?>
