@@ -78,8 +78,11 @@ function _create_issue ($node) {
   require_once ('api/api.php');
   if (count($node->og_groups) >0) { 
     foreach ($node->og_groups as $groupid) {
+      if ($groupid !=0 )
+       $ogid= $groupid;
+       continue;
     }
-    $group = node_load(array("nid" => $groupid));
+    $group = node_load(array("nid" => $ogid));
     $case_id = $group->{$civicrm_timetracker['field_case']}[0]['value'];
     if (!empty($case_id))
       $params ['case_id'] = $case_id;

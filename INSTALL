@@ -2,10 +2,16 @@ You need to create on the drupal side
 1) a project node type (that is an OG group) and that contains a cck field integer "case" (used to store the case's id in civicrm)
 2) an issue node type (that can be published in the OG group and that contains a cck field integer "activity" (used to store the activity id)
 
-and on civicrm, two types of activity types: task (for the issues) and timelog (err. for the timelog more on that later)
-
-and a case type project
-
 if you want to change the names, copy this file in your sites/settings.php and modify accordingly
 civicrm_timetracker.default.settings.php
+
+and on civicrm, two types of activity types: Issue (for the issues) and timelog (err. for the timelog more on that later)
+and a case type project
+and relationship
+
+cd /your/civicrm
+
+php bin/csv/import  -u user -p password -s yoursite.org RelationshipType /var/www/civi.custom/civicrm_timetracker/config/relationship.csv
+php bin/csv/import  -u user -p password -s yoursite.org OptionValue /var/www/civi.custom/civicrm_timetracker/config/optionvalue.csv
+
 
