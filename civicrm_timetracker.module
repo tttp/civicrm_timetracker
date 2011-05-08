@@ -17,39 +17,81 @@ function civicrm_timetracker_nodeapi(&$node, $op, $is_teaser = NULL, $is_page = 
     require_once ('civicrm_timetracker.default.settings.php');
   }
   // Prevent against invalid 'nodes' built by broken 3rd party code.
-  if (!isset($node->type) || $node->type !== $civicrm_timetracker['node_type_issue']) {
+  if (!isset($node->type))
     return;
-  }
   
   switch ($op) {
     case 'view':
       if ($is_page) {
       }
       break;
+    case 'load':
     case 'prepare':
     case 'validate':
       break;
     case 'presave':
-      civicrm_initialize();
-      require_once ('api/api.php');
-      // TODO need to fetch the project to set the case id
-      $params = array ('version' => 3, 'activity_name' => $civicrm_timetracker['activity_type_issue'], 'subject' => $node->title,'status_id' => 1);
-      
-      if (! empty ($node->{$civicrm_timetracker['field_activity']}[0]['value'] ) )
-        $params ['id'] = $node->{$civicrm_timetracker['field_activity']}[0]['value'];
-//echo "<pre>";print_r($params);
-//  die ($op);
-      $activity = civicrm_api ('Activity','Create',$params);
-      if (!empty($activity['id'])) {
-        $node->{$civicrm_timetracker['field_activity']}[0]['value'] = $activity['id'];
+       if ($node->type == $civicrm_timetracker['node_type_issue']) {
+         _create_issue (&$node);
+       } elseif ($node->type == $civicrm_timetracker['node_type_project']) {
+         _create_case (&$node);
       }
-//  print_r($activity);
-//  print_r($node);
-//  die ($op);
+     
       break;
     default :
   }
 }
 
+function _create_case ($node) {
+  global $civicrm_timetracker;
+  civicrm_initialize();
+  require_once ('api/api.php');
+  $nodeurl = url('node/'. $node->nid);
+  $details =  $node->teaser . "<div class='drupal ref'><a href='$nodeurl'>See more on the drupal side</a></div>";
+  $params = array ('version' =>'3', 'subject' => $node->title, 'details' => $details, 'case_type' =>'project');
+  //we assume the client organization is the name of the project
+  $contact = civicrm_api ("Contact","get", array ('version' =>'3', 'sort_name' => $node->title, 'sequential' => 1, 'return' => "sort_name,contact_id"));
+  if ($contact['count'] == 1) {
+    $params['contact_id'] = $contact['id'];
+  } elseif ($contact['count'] > 1 && $contact["values"][0]['sort_name'] == $node->title ) {
+    $params['contact_id'] = $contact["values"][0]['contact_id'];
+  }
+  if (empty ($params['contact_id'])) {
+    // we assign to the current user, IMO better than creating a client for the case
+    $session = CRM_Core_Session::singleton( );
+    $params['contact_id']  =  $session->get( 'userID' );
+  }
+
+  if (! empty ($node->{$civicrm_timetracker['field_case']}[0]['value'] ) )
+    $params ['id'] = $node->{$civicrm_timetracker['field_case']}[0]['value'];
+  $case = civicrm_api("Case","create", $params);
+  if (!empty($case['id'])) {
+    $node->{$civicrm_timetracker['field_case']}[0]['value'] = $case['id'];
+  }
+}
+
+function _create_issue ($node) {
+  global $civicrm_timetracker;
+  $nodeurl = url('node/'. $node->nid);
+  $details =  $node->teaser . "<div class='drupal ref'><a href='$nodeurl'>See more on the drupal side</a></div>";
+  $params = array ('version' => 3, 'activity_name' => $civicrm_timetracker['activity_type_issue'], 'subject' => $node->title, 'details' => $details, 'status_id' => 1);
+  civicrm_initialize();
+  require_once ('api/api.php');
+  if (count($node->og_groups) >0) { 
+    foreach ($node->og_groups as $groupid) {
+    }
+    $group = node_load(array("nid" => $groupid));
+    $case_id = $group->{$civicrm_timetracker['field_case']}[0]['value'];
+    if (!empty($case_id))
+      $params ['case_id'] = $case_id;
+
+  }
+
+  if (! empty ($node->{$civicrm_timetracker['field_activity']}[0]['value'] ) )
+    $params ['id'] = $node->{$civicrm_timetracker['field_activity']}[0]['value'];
+  $activity = civicrm_api ('Activity','Create',$params);
+  if (!empty($activity['id'])) {
+    $node->{$civicrm_timetracker['field_activity']}[0]['value'] = $activity['id'];
+  }
+}
 
 ?>
