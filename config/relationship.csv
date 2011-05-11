@@ -1,0 +1,4 @@
+name_b_a,name_a_b,description,contact_type_b,contact_type_a,is_reserved,is_active
+"Project Manager","Project managed for","Working on a project",Individual,Organization,0,1
+"Client","Client of","Working on a project",Individual,Organization,0,1
+"Provider","Provider for","Working on a project",Individual,Organization,0,1
