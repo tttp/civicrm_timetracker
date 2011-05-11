@@ -19,25 +19,25 @@ function civicrm_timetracker_nodeapi(&$node, $op, $is_teaser = NULL, $is_page = 
   // Prevent against invalid 'nodes' built by broken 3rd party code.
   if (!isset($node->type))
     return;
-  
+
   switch ($op) {
-    case 'view':
-      if ($is_page) {
-      }
-      break;
-    case 'load':
-    case 'prepare':
-    case 'validate':
-      break;
-    case 'presave':
-       if ($node->type == $civicrm_timetracker['node_type_issue']) {
-         _create_issue (&$node);
-       } elseif ($node->type == $civicrm_timetracker['node_type_project']) {
-         _create_case (&$node);
-      }
-     
-      break;
-    default :
+  case 'view':
+    if ($is_page) {
+    }
+    break;
+  case 'load':
+  case 'prepare':
+  case 'validate':
+    break;
+  case 'presave':
+    if ($node->type == $civicrm_timetracker['node_type_issue']) {
+      _create_issue (&$node);
+    } elseif ($node->type == $civicrm_timetracker['node_type_project']) {
+      _create_case (&$node);
+    }
+
+    break;
+  default :
   }
 }
 
@@ -79,8 +79,8 @@ function _create_issue ($node) {
   if (count($node->og_groups) >0) { 
     foreach ($node->og_groups as $groupid) {
       if ($groupid !=0 )
-       $ogid= $groupid;
-       continue;
+        $ogid= $groupid;
+      continue;
     }
     $group = node_load(array("nid" => $ogid));
     $case_id = $group->{$civicrm_timetracker['field_case']}[0]['value'];
